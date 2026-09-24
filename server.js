@@ -51,6 +51,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server listening on port ${PORT}`);
-  console.log(`📡 User API: http://localhost:${PORT}/api/user`);
-  console.log(`🛡️ Admin API: http://localhost:${PORT}/api/admin`);
+  console.log(`📡 User API: https://eventmanagemen-production.up.railway.app/api/user`);
+  console.log(`🛡️ Admin API: https://eventmanagemen-production.up.railway.app/api/admin`);
 });

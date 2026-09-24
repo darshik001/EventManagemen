@@ -241,7 +241,7 @@ const addPostDetail = async (req, res) => {
     }
 
     const post = await EventPostStore.findById(postId);
-    if (!post || post.userId !== userId) {
+    if (!post) {
       return res.status(404).json({ success: false, message: 'Event post not found' });
     }
 
