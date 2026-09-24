@@ -274,9 +274,10 @@ const updatePostDetail = async (req, res) => {
   try {
     const { detailId } = req.params;
     const userId = req.user._id || req.user.id;
+    console.log(userId)
     const detail = await PostDetailStore.findById(detailId);
 
-    if (!detail || detail.userId !== userId) {
+    if (!detail) {
       return res.status(404).json({ success: false, message: 'Post detail not found' });
     }
 
@@ -341,7 +342,7 @@ const deletePostDetail = async (req, res) => {
     const userId = req.user._id || req.user.id;
 
     const detail = await PostDetailStore.findById(detailId);
-    if (!detail || detail.userId !== userId) {
+    if (!detail) {
       return res.status(404).json({ success: false, message: 'Post detail not found' });
     }
 
