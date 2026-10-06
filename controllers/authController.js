@@ -77,7 +77,7 @@ const registerUser = async (req, res) => {
 // @route   POST /api/user/auth/login
 const loginUser = async (req, res) => {
   try {
-    const { loginId, email, mobile, password } = req.body;
+    const { loginId, email, mobile, password, device_id } = req.body;
     const identifier = loginId || email || mobile;
 
     if (!identifier || !password) {
@@ -101,6 +101,12 @@ const loginUser = async (req, res) => {
 
     const token = generateToken(user._id || user.id);
 
+    // Store device_id as deviceToken in user document at login time
+    if (device_id) {
+      await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
+      user.deviceToken = device_id;
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Login successful',
@@ -113,6 +119,7 @@ const loginUser = async (req, res) => {
         theme: user.theme,
         language: user.language,
         subscription: user.subscription,
+        deviceToken: user.deviceToken || '',
         token
       }
     });

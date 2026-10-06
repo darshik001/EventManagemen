@@ -127,12 +127,14 @@ If a user on a restricted plan attempts to access a locked feature, the API retu
 | :--- | :--- | :--- | :--- |
 | `loginId` | String | Yes | Registered Email OR Mobile Number |
 | `password` | String | Yes | Password |
+| `device_id` | String | No | Device token/ID to be stored as `deviceToken` on the user |
 
 #### Sample Request Body:
 ```json
 {
   "loginId": "johndoe@example.com",
-  "password": "SecurePassword123"
+  "password": "SecurePassword123",
+  "device_id": "fcm_device_token_abc123"
 }
 ```
 
@@ -154,6 +156,7 @@ If a user on a restricted plan attempts to access a locked feature, the API retu
       "planTitle": "Free Plan",
       "status": "active"
     },
+    "deviceToken": "fcm_device_token_abc123",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }

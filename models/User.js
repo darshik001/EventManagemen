@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   mobile: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  deviceToken: { type: String, default: '' },
   profileImage: { type: String, default: '' },
   theme: { type: String, enum: ['light', 'dark'], default: 'light' },
   language: { type: String, enum: ['english', 'hindi', 'gujarati'], default: 'english' },
