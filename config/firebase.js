@@ -43,7 +43,7 @@ exports.sendNotification = async (token, title, body) => {
             },
         });
 
-
+  console.log(res)
     } catch (error) {
         console.log("FCM Error:", error);
     }
