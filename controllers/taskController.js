@@ -17,7 +17,7 @@ const getTasks = async (req, res) => {
 const createTask = async (req, res) => {
   try {
     const { taskTitle, startDateTime, endDateTime, notify } = req.body;
-    console.log(req.body)
+    console.log("tak add",req.body)
     if (!taskTitle || !startDateTime || !endDateTime) {
       return res.status(400).json({ success: false, message: 'taskTitle, startDateTime, and endDateTime are required' });
     }
