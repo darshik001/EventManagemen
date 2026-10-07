@@ -3,6 +3,8 @@ const cron = require('node-cron');
 const {MongooseAppointment} = require('./models/Appointment');
 
 const {MongooseTask} = require('./models/Task');
+
+const {MongooseUser} = require('./models/User')
 const { sendNotification } = require('./config/firebase');
 
 // તમારું notification function
