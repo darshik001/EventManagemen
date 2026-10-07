@@ -6,7 +6,7 @@ const NoteEventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   tag: { type: String, default: 'General' },
   color: { type: String, default: '#60A5FA' },
-  type: { type: String, enum: ['note', 'quicknote'], default: 'note' },
+  type: { type: String, enum: ['note', 'quick'], default: 'note' },
   content: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
