@@ -105,7 +105,6 @@ cron.schedule('* * * * *', async () => {
       }
     });
 
-    console.log('Tasks:', tasks);
 
     if (tasks.length > 0) {
       // Get all user IDs
