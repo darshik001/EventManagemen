@@ -1,8 +1,8 @@
 const cron = require('node-cron');
 
-const MongooseAppointment = require('./models/Appointment');
+const {MongooseAppointment} = require('./models/Appointment');
 
-const MongooseTask = require('./models/Task');
+const {MongooseTask} = require('./models/Task');
 const { sendNotification } = require('./config/firebase');
 
 // તમારું notification function
@@ -42,6 +42,8 @@ cron.schedule('* * * * *', async () => {
         $lte: now
       }
     });
+
+    console.log(appointments)
 
    const userIds = appointments.map(
   appointment => appointment.userId
