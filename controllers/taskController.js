@@ -26,14 +26,15 @@ const createTask = async (req, res) => {
     const task = await TaskStore.create({
       userId,
       taskTitle,
-       startDateTime: new Date(`${startDateTime}+05:30`),
+      startDateTime: new Date(`${startDateTime}+05:30`),
       endDateTime: new Date(`${endDateTime}+05:30`),
       notify: notify !== undefined ? notify : true,
       isCompleted: false
     });
-
+      console.log(task)
     return res.status(201).json({ success: true, message: 'Task created successfully', data: task });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ success: false, message: 'Create task error', error: error.message });
   }
 };
@@ -43,7 +44,6 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id || req.user.id;
 
     const task = await TaskStore.findById(id);
     if (!task) {
@@ -57,8 +57,10 @@ const updateTask = async (req, res) => {
      }
 
     const updated = await TaskStore.findByIdAndUpdate(id, {...data}, { new: true });
+    console.log("task update",updated)
     return res.status(200).json({ success: true, message: 'Task updated successfully', data: updated });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ success: false, message: 'Update task error', error: error.message });
   }
 };

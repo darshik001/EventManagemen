@@ -12,7 +12,6 @@ cron.schedule('* * * * *', async () => {
   try {
     const now = new Date();
 
-    console.log('Cron running:', now);
 
     // =====================================================
     // APPOINTMENTS
@@ -87,9 +86,7 @@ cron.schedule('* * * * *', async () => {
         }
       );
 
-      console.log(
-        `Updated ${appointmentIds.length} appointments`
-      );
+      
     }
 
 
@@ -166,9 +163,7 @@ cron.schedule('* * * * *', async () => {
         }
       );
 
-      console.log(
-        `Updated ${taskIds.length} tasks`
-      );
+      
     }
 
   } catch (error) {
