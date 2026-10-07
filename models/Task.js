@@ -4,8 +4,8 @@ const ModelStore = require('./store');
 const TaskSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   taskTitle: { type: String, required: true },
-  startDateTime: { type: String, required: true },
-  endDateTime: { type: String, required: true },
+  startDateTime: { type: Date, required: true },
+  endDateTime: { type: Date, required: true },
   notify: { type: Boolean, default: true },
   isCompleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }

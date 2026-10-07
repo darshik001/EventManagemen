@@ -6,8 +6,8 @@ const AppointmentSchema = new mongoose.Schema({
   type: {type:String,enum:["post","quick","appointment"],default:"appointment"},
   appointmentTitle: { type: String, required: true },
   description: { type: String, default: '' },
-  startDateTime: { type: String, required: true },
-  endDateTime: { type: String, required: true },
+  startDateTime: { type: Date, required: true },
+  endDateTime: { type: Date, required: true },
   notify: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }
 });
