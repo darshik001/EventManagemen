@@ -26,8 +26,8 @@ const createAppointment = async (req, res) => {
       userId,
       appointmentTitle,
       description: description || '',
-      startDateTime,
-      endDateTime,
+      startDateTime: new Date(`${startDateTime}+05:30`),
+      endDateTime: new Date(`${endDateTime}+05:30`),
       notify: notify !== undefined ? notify : true
     });
 
