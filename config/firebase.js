@@ -1,5 +1,5 @@
 const  { initializeApp, cert } = require ('firebase-admin');
-const getMessaging = require('firebase-admin/messaging')
+const {getMessaging} = require('firebase-admin/messaging')
 let firebaseadmin = null;
 
 try {
@@ -28,8 +28,8 @@ exports.sendNotification = async (token, title, body) => {
 
         const messaging = getMessaging(firebaseadmin);
 
-        const res = await messaging.sendEachForMulticast({
-            tokens: token,
+        const res = await messaging.send({
+            token: token,
 
             notification: {
                 title,

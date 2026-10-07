@@ -26,8 +26,8 @@ const createTask = async (req, res) => {
     const task = await TaskStore.create({
       userId,
       taskTitle,
-      startDateTime,
-      endDateTime,
+       startDateTime: new Date(`${startDateTime}+05:30`),
+      endDateTime: new Date(`${endDateTime}+05:30`),
       notify: notify !== undefined ? notify : true,
       isCompleted: false
     });
