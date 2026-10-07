@@ -78,7 +78,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { loginId, email, mobile, password, device_id } = req.body;
-    console.log(req.body)
+  
     const identifier = loginId || email || mobile;
 
     if (!identifier || !password) {
@@ -104,8 +104,7 @@ const loginUser = async (req, res) => {
 
     // Store device_id as deviceToken in user document at login time
     if (device_id) {
-   const device =    await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
-   console.log("device token payload",device)
+     await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
       user.deviceToken = device_id;
     }
 
