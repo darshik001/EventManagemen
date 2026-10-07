@@ -50,7 +50,13 @@ const updateTask = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Task not found' });
     }
 
-    const updated = await TaskStore.findByIdAndUpdate(id, req.body, { new: true });
+       const data = {
+      ...req.body,
+       startDateTime: new Date(`${req.body.startDateTime}+05:30`),
+      endDateTime: new Date(`${req.body.endDateTime}+05:30`),
+     }
+
+    const updated = await TaskStore.findByIdAndUpdate(id, {...data}, { new: true });
     return res.status(200).json({ success: true, message: 'Task updated successfully', data: updated });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Update task error', error: error.message });

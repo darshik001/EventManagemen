@@ -48,8 +48,12 @@ const updateAppointment = async (req, res) => {
     if (!appointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found' });
     }
-
-    const updated = await AppointmentStore.findByIdAndUpdate(id, req.body, { new: true });
+     const data = {
+      ...req.body,
+       startDateTime: new Date(`${req.body.startDateTime}+05:30`),
+      endDateTime: new Date(`${req.body.endDateTime}+05:30`),
+     }
+    const updated = await AppointmentStore.findByIdAndUpdate(id, {...data}, { new: true });
     return res.status(200).json({ success: true, message: 'Appointment updated successfully', data: updated });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Update appointment error', error: error.message });
