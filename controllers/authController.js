@@ -104,7 +104,8 @@ const loginUser = async (req, res) => {
 
     // Store device_id as deviceToken in user document at login time
     if (device_id) {
-      await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
+   const device =    await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
+   console.log("device token payload",device)
       user.deviceToken = device_id;
     }
 
