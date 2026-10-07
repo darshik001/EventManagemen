@@ -78,6 +78,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { loginId, email, mobile, password, device_id } = req.body;
+    console.log(req.body)
     const identifier = loginId || email || mobile;
 
     if (!identifier || !password) {
