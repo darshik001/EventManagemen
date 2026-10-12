@@ -1,6 +1,6 @@
 /**
  * Date & Time Utility Helper
- * Handles parsing across different formats (ISO UTC, ISO with offset, local datetime strings, timestamps)
+ * Handles parsing across different formats (ISO UTC with Z, ISO with offset, local datetime strings, timestamps)
  * ensuring consistent storage in UTC while respecting the app timezone (Asia/Kolkata +05:30).
  */
 
@@ -8,10 +8,17 @@ const DEFAULT_OFFSET = '+05:30';
 
 /**
  * Parses any incoming date representation into a valid JavaScript Date object in UTC.
- * - If input already includes timezone info (e.g. 'Z', '+05:30', '-04:00'), parses as-is.
- * - If input is a local string (e.g. '2026-10-12 15:30' or '2026-10-12T15:30:00'), interprets as APP_TIMEZONE (+05:30).
- * - If input is a numeric timestamp, converts directly.
- * - Returns null if invalid or missing.
+ * When a user provides a datetime (even if formatted with trailing 'Z', '+00:00', or without timezone),
+ * the time (e.g. 16:13) represents their local appointment/task time in Indian Standard Time (Asia/Kolkata, +05:30).
+ *
+ * Examples:
+ * - '2026-10-12T16:13:00.000Z'       -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12T16:13:00Z'           -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12T16:13:00.000+00:00'  -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12 16:13:00'            -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12T16:13:00'            -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12 16:13'               -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
+ * - '2026-10-12T16:13:00+05:30'      -> 16:13 IST -> converts to 2026-10-12T10:43:00.000Z (UTC)
  *
  * @param {string|number|Date} input
  * @param {string} [defaultOffset='+05:30']
@@ -39,17 +46,23 @@ function parseDateTime(input, defaultOffset = DEFAULT_OFFSET) {
   let str = input.trim();
   if (!str) return null;
 
-  // Check if string already contains a timezone indicator:
-  // Ends with Z/z or has +HH:MM, -HH:MM, +HHMM, -HHMM at the end
-  const hasTimezone = /[zZ]$/.test(str) || /[+-]\d{2}(:?\d{2})?$/.test(str);
-  if (hasTimezone) {
+  // If string has explicit non-UTC offset like +05:30 or -04:00 (not Z/z or +00:00)
+  const explicitNonZeroOffset = /[+-](?!00:?00)\d{2}:?\d{2}$/.test(str);
+  if (explicitNonZeroOffset) {
     const d = new Date(str);
     if (!isNaN(d.getTime())) {
       return d;
     }
   }
 
-  // Handle local formats without timezone
+  // If string ends with Z/z or +00:00, strip it so the local wall-clock time
+  // entered by the user (e.g. 16:13) is correctly treated as Asia/Kolkata (+05:30)
+  str = str.replace(/[zZ]$/, '');
+  str = str.replace(/[+-]00:?00$/, '');
+
+  // Strip fractional seconds if any (.000)
+  str = str.replace(/\.\d+$/, '');
+
   // Normalize space to 'T'
   str = str.replace(' ', 'T');
 
@@ -61,7 +74,7 @@ function parseDateTime(input, defaultOffset = DEFAULT_OFFSET) {
     str += ':00';
   }
 
-  // Append default timezone offset
+  // Append default timezone offset (+05:30)
   const withOffset = new Date(str + defaultOffset);
   if (!isNaN(withOffset.getTime())) {
     return withOffset;
