@@ -9,7 +9,9 @@ const {
   loginUser,
   forgotPassword,
   changePassword,
-  logoutUser
+  logoutUser,
+  UserForgotPassword,
+  ResetPassword
 } = require('../controllers/authController');
 
 const {
@@ -81,7 +83,8 @@ const {
 // Authentication Routes
 router.post('/auth/register', registerUser);
 router.post('/auth/login', loginUser);
-router.post('/auth/forgot-password', forgotPassword);
+router.post('/auth/forgot-password', UserForgotPassword);
+router.post('/auth/reset-password', ResetPassword);
 router.post('/auth/change-password', changePassword);
 router.post('/auth/logout', logoutUser);
 

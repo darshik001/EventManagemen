@@ -1,3 +1,7 @@
+const { sendEmail } = require ('../config/nodemailer.confing');
+const { ForgetPasswordMail, ForgotgenerateJwtToken }  = require ('../utils/helper');
+
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserStore } = require('../models/User');
@@ -160,6 +164,98 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+
+ const UserForgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body
+
+    if (!email) {
+      return res.status(422).json({success:false,message:"Enter Your Register Email"})
+    }
+
+    const user = await UserStore.findOne({ email: email})
+
+    if (!user) {
+      return res.status(404).json({success:false,message:"Inavlid Email Enter Your Register Email"})
+
+    }
+
+
+    const token = ForgotgenerateJwtToken(user)
+
+    const link = `${process.env.BACKEND_DOMIN_URL}/reset-password/${token}`
+
+    await sendEmail(ForgetPasswordMail(user.email, user.name, link))
+
+    return res.status(200).json({ success: true, message: "Reset Password Link Sent Your Register Email" })
+
+  } catch (error) {
+    return next(error)
+  }
+}
+
+
+
+const ResetPasswordpage = async (req, res, next) => {
+  try {
+    const token = req.params.token
+    res.render('reset-password', { token, message: "", type: "" })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+
+const ResetPassword = async (req, res, next) => {
+
+  try {
+
+    const token = req.params.token;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.render("reset-password", {
+        token: token,
+        message: "Password Is Required.",
+        type: "error"
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.FORGOT_PASSWORD_JWT_SECRET);
+    const userId = decoded.id;
+
+
+    // 2. hash password
+    const hashPassword = await bcrypt.hash(password, 12);
+
+    await UserModel.findByIdAndUpdate(userId, { password: hashPassword, accessToken: [] });
+    return res.render("reset-password", {
+      token,
+      message: "Password updated successfully",
+      type: "success"
+    });
+
+  } catch (error) {
+    console.log(error)
+    if (error.name === "TokenExpiredError") {
+      return res.render("reset-password", {
+        token: null,
+        message: "Your reset password link has expired. Please request a new one.",
+        type: "expired"
+      });
+    }
+
+    if (error.name === "JsonWebTokenError") {
+      return res.render("reset-password", {
+        token: null,
+        message: "Invalid reset password link.",
+        type: "error"
+      });
+    }
+    return next(error);
+  }
+};
+
 // @desc    Change Password
 // @route   POST /api/user/auth/change-password
 const changePassword = async (req, res) => {
@@ -209,5 +305,9 @@ module.exports = {
   loginUser,
   forgotPassword,
   changePassword,
-  logoutUser
+  logoutUser,
+
+  UserForgotPassword,
+  ResetPasswordpage,
+  ResetPassword
 };
