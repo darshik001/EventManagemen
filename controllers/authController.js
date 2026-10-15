@@ -228,7 +228,7 @@ const ResetPassword = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
    
-    await UserStore.findByIdAndUpdate(userId, { password: hashPassword, accessToken: [] });
+    await UserStore.findByIdAndUpdate(userId, { password: hashPassword });
     return res.render("reset-password", {
       token,
       message: "Password updated successfully",
