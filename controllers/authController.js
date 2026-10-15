@@ -225,10 +225,10 @@ const ResetPassword = async (req, res, next) => {
     const userId = decoded.id;
 
 
-    // 2. hash password
-    const hashPassword = await bcrypt.hash(password, 12);
-
-    await UserModel.findByIdAndUpdate(userId, { password: hashPassword, accessToken: [] });
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+   
+    await UserStore.findByIdAndUpdate(userId, { password: hashPassword, accessToken: [] });
     return res.render("reset-password", {
       token,
       message: "Password updated successfully",
