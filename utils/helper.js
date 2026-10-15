@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken')
+
+const logoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4HWtf_5LdrI-YPUR2QLQ-kZHaxMyIbGlK3d0h8HwAuA&s=10"
 exports.ForgotgenerateJwtToken = (data) => {
     return jwt.sign({ id: data.id || data._id, role: data.role }, process.env.FORGOT_PASSWORD_JWT_SECRET,{ expiresIn: "10m" })
 
