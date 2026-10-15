@@ -208,7 +208,8 @@ const ResetPasswordpage = async (req, res, next) => {
 const ResetPassword = async (req, res, next) => {
 
   try {
-
+console.log('RESET PASSWORD ROUTE HIT');
+    console.log('Request body:', req.body);
     const token = req.params.token;
     const { password } = req.body;
 
