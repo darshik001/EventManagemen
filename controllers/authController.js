@@ -184,7 +184,6 @@ const forgotPassword = async (req, res) => {
     const token = ForgotgenerateJwtToken(user)
 
     const link = `${process.env.BACKEND_DOMIN_URL}/reset-password/${token}`
-
     await sendEmail(ForgetPasswordMail(user.email, user.fullName, link))
 
     return res.status(200).json({ success: true, message: "Reset Password Link Sent Your Register Email" })
