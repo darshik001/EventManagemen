@@ -11,6 +11,12 @@ const nodemailer = require('nodemailer')
 // })
 
 
+const dns = require('dns')
+
+dns.lookup('smtp.gmail.com', (err, address) => {
+    console.log('GMAIL IP:', err || address)
+})
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
