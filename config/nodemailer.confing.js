@@ -1,4 +1,4 @@
-const  nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer')
 
 // const transporter = nodemailer.createTransport({
 //     service: 'gmail',
@@ -12,7 +12,7 @@ const  nodemailer = require('nodemailer')
 
 
 const transporter = nodemailer.createTransport({
-    service: 'smtp.gmail.com',
+    host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
