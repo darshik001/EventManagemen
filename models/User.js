@@ -4,8 +4,9 @@ const ModelStore = require('./store');
 const UserSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  mobile: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  mobile: { type: String, default:null },
+  password: { type: String,default:null },
+  googleId:{type: String, default:null},
   deviceToken: { type: String, default: '' },
   profileImage: { type: String, default: '' },
   theme: { type: String, enum: ['light', 'dark'], default: 'light' },

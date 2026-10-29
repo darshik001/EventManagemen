@@ -8,6 +8,7 @@ const {
   registerUser,
   loginUser,
   forgotPassword,
+  GoogleLogin,
   changePassword,
   logoutUser,
   UserForgotPassword,
@@ -83,6 +84,7 @@ const {
 // Authentication Routes
 router.post('/auth/register', registerUser);
 router.post('/auth/login', loginUser);
+router.post('/auth/google-login',GoogleLogin)
 router.post('/auth/forgot-password', UserForgotPassword);
 router.post('/auth/reset-password/:token', ResetPassword);
 router.post('/auth/change-password', changePassword);

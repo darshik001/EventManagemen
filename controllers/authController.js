@@ -1,11 +1,12 @@
-const { sendEmail } = require ('../config/nodemailer.confing');
-const { ForgetPasswordMail, ForgotgenerateJwtToken }  = require ('../utils/helper');
+const { sendEmail } = require('../config/nodemailer.confing');
+const { ForgetPasswordMail, ForgotgenerateJwtToken } = require('../utils/helper');
 
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserStore } = require('../models/User');
-
+const { getAuth } = require('firebase-admin/auth');
+const { firebaseadmin } = require('../config/firebase');
 const generateToken = (id, role = 'user') => {
   return jwt.sign(
     { id, role },
@@ -82,7 +83,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { loginId, email, mobile, password, device_id } = req.body;
-  
+
     const identifier = loginId || email || mobile;
 
     if (!identifier || !password) {
@@ -108,7 +109,7 @@ const loginUser = async (req, res) => {
 
     // Store device_id as deviceToken in user document at login time
     if (device_id) {
-     await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
+      await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
       user.deviceToken = device_id;
     }
 
@@ -132,6 +133,66 @@ const loginUser = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server login error', error: error.message });
   }
 };
+
+const GoogleLogin = async (req, res) => {
+  try {
+    const { GoogleIdToken, device_id } = req.body;
+    if (!GoogleIdToken) {
+      return res.status(422).json({ success: false, message: "GoogleIdToken is Required" });
+    }
+
+    console.log(GoogleIdToken)
+    let decoded
+    try {
+
+      decoded = await getAuth(firebaseadmin).verifyIdToken(GoogleIdToken);
+      console.log(decoded)
+    } catch (error) {
+      console.log(error)
+      return res.status(409).json({ success: false, message: "invalid user" })
+
+    }
+    if (!decoded) {
+      return res.status(409).json({ success: false, message: "invalid user" })
+    }
+
+    let user = await UserStore.findOne({ email: decoded.email })
+    console.log(user)
+    if (!user) {
+      user = await UserStore.create({ fullName: decoded.name, email: decoded.email, googleId: decoded.sub })
+    }
+
+
+    const token = generateToken(user._id || user.id);
+
+    // Store device_id as deviceToken in user document at login time
+    if (device_id) {
+      user = await UserStore.findByIdAndUpdate(user._id || user.id, { deviceToken: device_id });
+      user.deviceToken = device_id;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        id: user._id || user.id,
+        fullName: user.fullName,
+        email: user.email,
+        mobile: user.mobile,
+        profileImage: user.profileImage,
+        theme: user.theme,
+        language: user.language,
+        subscription: user.subscription,
+        deviceToken: user.deviceToken || '',
+        token
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server login error', error: error.message });
+
+  }
+
+}
 
 // @desc    Forgot Password
 // @route   POST /api/user/auth/forgot-password
@@ -165,18 +226,18 @@ const forgotPassword = async (req, res) => {
 };
 
 
- const UserForgotPassword = async (req, res, next) => {
+const UserForgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body
 
     if (!email) {
-      return res.status(422).json({success:false,message:"Enter Your Register Email"})
+      return res.status(422).json({ success: false, message: "Enter Your Register Email" })
     }
 
-    const user = await UserStore.findOne({ email: email})
+    const user = await UserStore.findOne({ email: email })
 
     if (!user) {
-      return res.status(404).json({success:false,message:"Inavlid Email Enter Your Register Email"})
+      return res.status(404).json({ success: false, message: "Inavlid Email Enter Your Register Email" })
 
     }
 
@@ -208,7 +269,7 @@ const ResetPasswordpage = async (req, res, next) => {
 const ResetPassword = async (req, res, next) => {
 
   try {
-console.log('RESET PASSWORD ROUTE HIT');
+    console.log('RESET PASSWORD ROUTE HIT');
     console.log('Request body:', req.body);
     const token = req.params.token;
     const { password } = req.body;
@@ -227,7 +288,7 @@ console.log('RESET PASSWORD ROUTE HIT');
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
-   
+
     await UserStore.findByIdAndUpdate(userId, { password: hashPassword });
     return res.render("reset-password", {
       token,
@@ -303,6 +364,7 @@ const logoutUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  GoogleLogin,
   forgotPassword,
   changePassword,
   logoutUser,
